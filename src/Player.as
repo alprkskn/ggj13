@@ -13,18 +13,20 @@ package
 	public class Player extends FlxB2Sprite 
 	{
 		
-		public function Player(world:b2World, X:Number, Y:Number) 
+		public function Player(X:Number, Y:Number) 
 		{
-			super(world, X, Y, Assets.PLAYER_SPRITE);
+			super((FlxG.state as GameState).world, X, Y, Assets.PLAYER_SPRITE);
+			
+			// init box2d
 			b2Type = b2Body.b2_dynamicBody;
 			b2LinearDamping = 10;
+			b2FixedRotation = true;
 			createCircle();
 		}
 		
 		override public function update():void 
 		{
 			super.update();
-			
 			var flag:int = 0;
 			if (FlxG.keys.A)
 			{
