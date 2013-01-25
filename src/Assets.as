@@ -12,5 +12,7 @@ package
 		public static const WALL_SPRITE:Class;
 		[Embed(source="assets/glow.png")]
 		static public const GLOW_SPRITE:Class;
+		[Embed(source="assets/zombie.png")]
+		static public const ZOMBIE_SPRITE:Class;
 	}
 }

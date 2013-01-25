@@ -12,7 +12,7 @@ package
 	 */
 	public class Player extends FlxB2Sprite 
 	{
-		
+		public var runCounter:Number = 0;
 		public function Player(X:Number, Y:Number) 
 		{
 			super((FlxG.state as GameState).world, X, Y, Assets.PLAYER_SPRITE);
@@ -31,20 +31,27 @@ package
 			if (FlxG.keys.A)
 			{
 				body.ApplyForce(new b2Vec2( -10, 0), body.GetPosition());
+				flag |= 1;
 			}
 			if (FlxG.keys.D)
 			{
 				body.ApplyForce(new b2Vec2( 10, 0), body.GetPosition());
-				
+				flag |= 1;
 			}
 			if (FlxG.keys.S)
 			{
 				body.ApplyForce(new b2Vec2( 0, 10), body.GetPosition());
-				
+				flag |= 2;
 			}
 			if (FlxG.keys.W)
 			{
 				body.ApplyForce(new b2Vec2( 0, -10), body.GetPosition());
+				flag |= 2;
+			}
+			
+			if (flag)
+			{
+				runCounter += 1;
 			}
 		}
 	}
