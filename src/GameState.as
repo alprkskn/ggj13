@@ -1,6 +1,7 @@
 package  
 {
 	import org.flixel.FlxB2State;
+	import org.flixel.FlxG;
 	
 	/**
 	 * ...
@@ -8,13 +9,14 @@ package
 	 */
 	public class GameState extends FlxB2State 
 	{
-		private var _player:Player;
+		private var player:Player;
 		
 		override public function create():void 
 		{
 			super.create();
 			
-			_player = new Player();
+			player = new Player(world, FlxG.width / 2, FlxG.height / 2);
+			add(player);
 		}
 	}
 }
