@@ -14,5 +14,10 @@ package
 		static public const GLOW_SPRITE:Class;
 		[Embed(source="assets/zombie.png")]
 		static public const ZOMBIE_SPRITE:Class;
+		[Embed(source="assets/dispMap.png")]
+		static public const DISP_MAP_SPRITE:Class;
+		[Embed(source="assets/bullet.png")]
+		static public const BULLET_SPRITE:Class;
+		
 	}
 }

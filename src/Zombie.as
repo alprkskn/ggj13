@@ -25,7 +25,9 @@ package
 			b2LinearDamping = 10;
 			b2Density = 0.5;
 			b2FixedRotation = true;
+			b2Filter.categoryBits |= 2;
 			createCircle();
+			
 			
 			player = (FlxG.state as GameState).player;
 			seekState = new ZombieSeek();
