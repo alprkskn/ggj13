@@ -6,6 +6,7 @@ package org.flixel
 	
 	public class FlxB2Sprite extends FlxSprite
 	{
+		public var updateAngle:Boolean = true;;
 		public var fixtureDef:b2FixtureDef;
 		public var bodyDef:b2BodyDef
 		public var body:b2Body;
@@ -239,8 +240,9 @@ package org.flixel
 			super.update();
 			
 			x = (body.GetPosition().x * FlxG.B2SCALE) - width*.5 ;
-			y = (body.GetPosition().y * FlxG.B2SCALE) - height*.5;
-			angle = body.GetAngle() * 180 / Math.PI;
+			y = (body.GetPosition().y * FlxG.B2SCALE) - height * .5;
+			if (updateAngle)
+				angle = body.GetAngle() * 180 / Math.PI;
 		}
 		
 		override public function kill():void 

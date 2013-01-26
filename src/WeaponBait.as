@@ -16,7 +16,7 @@ package
 		
 		public function update():void 
 		{
-			if (FlxG.mouse.justPressed() && counter > 100)
+			if (FlxG.mouse.justPressed() && counter > 100 && Globals.checkAmmo("bait"))
 			{
 				var bulvec:b2Vec2 = new b2Vec2(FlxG.mouse.x, FlxG.mouse.y);
 				bulvec.Multiply(1.0 / FlxG.B2SCALE);

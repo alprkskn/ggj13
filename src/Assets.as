@@ -14,8 +14,10 @@ package
 		static public const GLOW_SPRITE:Class;
 		[Embed(source="assets/zombie.png")]
 		static public const ZOMBIE_SPRITE:Class;
+		[Embed(source="assets/dispMapExp.png")]
+		static public const DISP_MAP_EXP_SPRITE:Class;
 		[Embed(source="assets/dispMapGun.png")]
-		static public const DISP_MAP_SPRITE:Class;
+		static public const DISP_MAP_WEAPON_SPRITE:Class;
 		[Embed(source="assets/bullet.png")]
 		static public const BULLET_SPRITE:Class;
 		[Embed(source="assets/blood.png")]
@@ -26,10 +28,24 @@ package
 		static public const BAIT_SPRITE:Class;
 		[Embed(source="assets/smoke.png")]
 		static public const SMOKE_SPRITE:Class;
+		[Embed(source="assets/noise.png")]
+		static public const NOISE_SPRITE:Class;
+		
 		[Embed(source="assets/maps/zaaaImage.png")]
 		static public const MAP1_SPRITE:Class;
-		[Embed(source = "assets/maps/zaaaData.txt",mimeType="application/octet-stream")]
+		[Embed(source = "assets/maps/zaaaData.txt", mimeType="application/octet-stream")]
 		static public const MAP1_JSON:Class;
+		
+		[Embed(source="assets/sound/Heart.mp3")]
+		static public const HEARTBEAT_SOUND:Class;
+		[Embed(source="assets/sound/shotgun.mp3")]
+		static public const SHOTGUN_SOUND:Class;
+		[Embed(source="assets/sound/Pistol.mp3")]
+		static public const PISTOL_SOUND:Class;
+		[Embed(source="assets/sound/Explosion.mp3")]
+		static public const EXPLOSION_SOUND:Class;
+		[Embed(source="assets/sound/Noise.mp3")]
+		static public const NOISE_SOUND:Class;
 		
 	}
 }

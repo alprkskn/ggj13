@@ -17,7 +17,7 @@ package
 		
 		public function update():void 
 		{
-			if (FlxG.mouse.pressed() && counter > 100)
+			if (FlxG.mouse.pressed() && counter > 100 && Globals.checkAmmo("grenade"))
 			{
 				counter = 0;
 				var bulvec:b2Vec2 = new b2Vec2(FlxG.mouse.x, FlxG.mouse.y);

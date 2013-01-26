@@ -17,7 +17,7 @@ package
 		
 		public function update():void 
 		{
-			if (FlxG.mouse.pressed() && counter > 5)
+			if (FlxG.mouse.pressed() && counter > 5 && Globals.checkAmmo("uzi"))
 			{
 				counter = 0;
 				var bulvec:b2Vec2 = new b2Vec2(FlxG.mouse.x, FlxG.mouse.y);
@@ -29,6 +29,9 @@ package
 				var bullet:Bullet = new Bullet(parent.player.getMidpoint().x, parent.player.getMidpoint().y, bulvec);
 				parent.bullets.add(bullet);
 				parent.dispAmount = -40;
+				
+				FlxG.play(Assets.PISTOL_SOUND, 0.3+Math.random()*0.1);
+				
 			}
 			counter++;
 		}

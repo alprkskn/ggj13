@@ -49,6 +49,18 @@ package
 			var au:* = contact.GetFixtureA().GetBody().GetUserData();
 			var bu:* = contact.GetFixtureB().GetBody().GetUserData();
 			
+			// zombie hit player
+			if ((ad & 2 && bd & 8) || (ad & 8 && bd & 2))
+			{
+				if (ad & 8)
+				{
+					(au as Damageble).doDamage(1);
+				} else
+				{
+					(bu as Damageble).doDamage(1);
+				}
+			}
+			// bullet hit zombie
 			if ((ad & 2 && bd & 4) || (ad & 4 && bd & 2))
 			{
 				(au as Damageble).doDamage(1);

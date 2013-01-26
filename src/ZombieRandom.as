@@ -16,16 +16,7 @@ package
 		
 		public function update():void 
 		{
-			if (parent.player.alive)
-			{
-				if (Math.random() < 0.1)
-				{
-					angle = Math.random() * Math.PI * 2;
-				}
-				parent.body.ApplyForce(new b2Vec2(Math.cos(angle)*2, Math.sin(angle)*2), parent.body.GetPosition());
-			}
-			
-			if (Math.random() < 0.01)
+			if (Math.random() < 0.1)
 			{
 				parent.currentState = parent.seekState;
 			}

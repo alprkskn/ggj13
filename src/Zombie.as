@@ -27,7 +27,7 @@ package
 			b2Density = 0.5;
 			b2FixedRotation = true;
 			b2Filter.categoryBits = 2;
-			createCircle();
+			createCircle(8);
 			
 			
 			player = (FlxG.state as GameState).player;
@@ -37,6 +37,8 @@ package
 			baitState.create(this);
 			
 			health = 10;
+			
+			updateAngle = false;
 			
 			currentState = seekState;
 		}

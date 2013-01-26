@@ -35,7 +35,7 @@ package
 			if (counter > 100)
 			{
 				(FlxG.state as GameState).explode(getMidpoint().x, getMidpoint().y);
-				(FlxG.state as GameState).dispAmount = -200;
+				(FlxG.state as GameState).expDispAmount = -200;
 				kill();
 			}
 			counter++;

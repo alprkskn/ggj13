@@ -47,7 +47,7 @@ package
 				dx = target.body.GetPosition().x - parent.body.GetPosition().x;
 				dy = target.body.GetPosition().y - parent.body.GetPosition().y;
 				dd = Math.sqrt(dx * dx + dy * dy);
-				
+				parent.angle = Math.atan2(dy, dx) * 180 / Math.PI;
 				parent.body.ApplyForce(new b2Vec2( dx / dd * 5, dy / dd * 5), parent.body.GetPosition());
 			} else
 			{

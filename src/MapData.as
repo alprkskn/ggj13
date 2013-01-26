@@ -13,9 +13,13 @@ package {
 	public class MapData {
 		public var name:String;
 		public var wallVertices:Array;
+		public var entities:Array;
+		
 		public var bmpData:BitmapData;
+		
 		public function MapData() {
 			wallVertices = new Array();
+			entities = new Array();
 		}
 		
 		public function loadMap(img:Class, json:Class):void {
@@ -23,8 +27,16 @@ package {
 			var data:String = (new json() as ByteArray).toString();
 			var dt:Object = JSON.decode(data);
 			bmpData = (new img() as Bitmap).bitmapData;
+			
 			for each(var o:Object in dt.vertices)
+			{
 				wallVertices.push(new Point(o.x, o.y));
+			}
+			
+			for each(o in dt.entities)
+			{
+				entities.push( { "name":o.name, "x":o.pos.x, "y":o.pos.y } );
+			}
 		}
 		
 		public function getVerticesOfIndex(i:int):Array {
