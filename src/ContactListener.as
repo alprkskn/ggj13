@@ -18,17 +18,39 @@ package
 		override public function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void 
 		{
 			super.PreSolve(contact, oldManifold);
-			var ad:uint = contact.GetFixtureA().GetBody().GetUserData();
-			var bd:uint = contact.GetFixtureB().GetBody().GetUserData();
+			var ad:uint = contact.GetFixtureA().GetFilterData().categoryBits;
+			var bd:uint = contact.GetFixtureB().GetFilterData().categoryBits;
+			
+			if ((ad & 8 && bd & 4) || (ad & 4 && bd & 8))
+			{
+				contact.SetEnabled(false);
+			}
+			if (ad & 4 && bd & 4)
+			{
+				contact.SetEnabled(false);
+			}
 		}
 		override public function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void 
 		{
 			super.PostSolve(contact, impulse);
-			var bd:uint = contact.GetFixtureA().GetBody().GetUserData();
-			var ad:uint = contact.GetFixtureB().GetBody().GetUserData();
 			
-			var afd:uint = contact.GetFixtureA().GetUserData();
-			var bfd:uint = contact.GetFixtureB().GetUserData();
+			var ad:uint = contact.GetFixtureA().GetFilterData().categoryBits;
+			var bd:uint = contact.GetFixtureB().GetFilterData().categoryBits;
+			var au:* = contact.GetFixtureA().GetBody().GetUserData();
+			var bu:* = contact.GetFixtureB().GetBody().GetUserData();
+			
+			if ((ad & 2 && bd & 4) || (ad & 4 && bd & 2))
+			{
+				(au as Damageble).doDamage(1);
+				(bu as Damageble).doDamage(1);
+			}
+			if (bd & 4)
+			{
+				(bu as Damageble).doDamage(1);
+			} else if (ad & 4)
+			{
+				(au as Damageble).doDamage(1);
+			}
 		}
 	}
 }

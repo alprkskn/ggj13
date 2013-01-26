@@ -17,6 +17,7 @@ package
 	import org.flixel.FlxB2Sprite;
 	import org.flixel.FlxB2State;
 	import org.flixel.FlxCamera;
+	import org.flixel.FlxEmitter;
 	import org.flixel.FlxG;
 	import org.flixel.FlxGroup;
 	import org.flixel.FlxPoint;
@@ -29,17 +30,26 @@ package
 	public class GameState extends FlxB2State 
 	{
 		public var player:Player;
-		private var glow:FlxSprite;
+		public var glow:FlxSprite;
 		
-		private var fovPoints:Array = [];
-		private var fovRayObject:Object = null;
+		public var fovPoints:Array = [];
+		public var fovRayObject:Object = null;
 		
-		private var foreground:FlxCamera;
-		private var background:FlxCamera;
-		private var fovShape:Shape;
-		private var dispMap:BitmapData;
+		public var foreground:FlxCamera;
+		public var background:FlxCamera;
+		public var fovShape:Shape;
+		public var dispMap:BitmapData;
 		
 		public var zombies:FlxGroup;
+		public var bullets:FlxGroup;
+		
+		public var weaponState:AIState;
+		public var pistolState:WeaponPistol = new WeaponPistol();
+		public var shotgunState:WeaponShotgun = new WeaponShotgun();
+		public var uziState:WeaponUzi = new WeaponUzi();
+		
+		public var bloodDispenser:FlxEmitter = new FlxEmitter(0, 0);
+		public var gibsDispenser:FlxEmitter = new FlxEmitter(0, 0);
 		
 		override public function create():void 
 		{
@@ -48,8 +58,27 @@ package
 			FlxG.bgColor = 0xFF261918;
 			background = FlxG.camera;
 			
+			var contactListener:ContactListener = new ContactListener();
+			world.SetContactListener(contactListener);
+			
 			// this is just used for its bitmap layer
 			foreground = new FlxCamera(0, 0, FlxG.width, FlxG.height, 0);
+			
+			bloodDispenser.setSize(16, 16);
+			bloodDispenser.setXSpeed(-50, 50);
+			bloodDispenser.setYSpeed( -50, 50);
+			bloodDispenser.particleDrag = new FlxPoint(100, 100);
+			bloodDispenser.setRotation(0, 0);
+			bloodDispenser.makeParticles(Assets.BLOOD_SPRITE, 500, 16, true);
+			add(bloodDispenser);
+			
+			gibsDispenser.setSize(16, 16);
+			gibsDispenser.setXSpeed( -100, 100);
+			gibsDispenser.setYSpeed( -100, 100);
+			gibsDispenser.particleDrag = new FlxPoint(100, 100);
+			gibsDispenser.setRotation(0, 0);
+			gibsDispenser.makeParticles(Assets.GIBS_SPRITE, 100, 16, true);
+			add(gibsDispenser);
 			
 			for (var i:int = 0; i < 10; i++)
 			{
@@ -70,6 +99,9 @@ package
 			}
 			add(zombies);
 			
+			bullets = new FlxGroup()
+			add(bullets);
+			
 			glow = new FlxSprite(0, 0, Assets.GLOW_SPRITE);
 			glow.offset.x = glow.width * 0.5;
 			glow.offset.y = glow.height * 0.5;
@@ -79,11 +111,17 @@ package
 			FlxG.camera.follow(player);
 			
 			dispMap = (new Assets.DISP_MAP_SPRITE() as BitmapAsset).bitmapData;
+			
+			shotgunState.create(this);
+			uziState.create(this);
+			pistolState.create(this);
+			
+			weaponState = uziState;
 		}
 		
 		private function rayCallback(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
 		{
-			if (fixture.GetFilterData().categoryBits & 2)
+			if (fixture.GetFilterData().categoryBits & 2 || fixture.GetFilterData().categoryBits & 4)
 				return 1;
 			
 			if (null == fovRayObject)
@@ -139,21 +177,30 @@ package
 			
 			glow.x = player.getMidpoint().x;
 			glow.y = player.getMidpoint().y;
+			
+			if (FlxG.keys.ONE)
+				weaponState = uziState;
+			if (FlxG.keys.TWO)
+				weaponState = shotgunState;
+			if (FlxG.keys.THREE)
+				weaponState = pistolState;
+			weaponState.update();
 		}
 		
 		override public function draw():void 
 		{
 			super.draw();
+			
 			foreground.buffer.fillRect(foreground.buffer.rect, 0);
 			
 			var mat:Matrix = new Matrix();
 			mat.translate( -background.scroll.x, -background.scroll.y);
 			
 			foreground.buffer.draw(fovShape, mat);
-			//var dmf:DisplacementMapFilter = new DisplacementMapFilter(dispMap, new Point(Math.random()*100,Math.random()*100), BitmapDataChannel.RED, BitmapDataChannel.GREEN,100,100);
 			foreground.buffer.applyFilter(foreground.buffer, foreground.buffer.rect, new Point(), new BlurFilter(30, 30));
-			//background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmf);
 			//background.buffer.threshold(foreground.buffer, foreground.buffer.rect, new Point(), "<=", 0x22222222, 0xFF000000);
+			//var dmf:DisplacementMapFilter = new DisplacementMapFilter(dispMap, new Point(FlxG.width/2-dispMap.width/2,FlxG.height/2-dispMap.height/2), BitmapDataChannel.RED, BitmapDataChannel.GREEN,dispAmount,dispAmount);
+			//background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmf);
 		}
 	}
 }

@@ -18,6 +18,10 @@ package
 		static public const DISP_MAP_SPRITE:Class;
 		[Embed(source="assets/bullet.png")]
 		static public const BULLET_SPRITE:Class;
+		[Embed(source="assets/blood.png")]
+		static public const BLOOD_SPRITE:Class;
+		[Embed(source="assets/gibs.png")]
+		static public const GIBS_SPRITE:Class;
 		
 	}
 }

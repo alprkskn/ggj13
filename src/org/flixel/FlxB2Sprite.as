@@ -128,7 +128,7 @@ package org.flixel
 			world = World;
 			
 			// body
-			b2UserData = null;
+			b2UserData = this;
 			b2Angle = 0;
 			b2Position.Set((X + width * 0.5) / FlxG.B2SCALE , (Y + height * 0.5) / FlxG.B2SCALE);
 			b2LinearVelocity.Set(0, 0);
@@ -243,10 +243,15 @@ package org.flixel
 			angle = body.GetAngle() * 180 / Math.PI;
 		}
 		
+		override public function kill():void 
+		{
+			super.kill();
+			body.SetActive(false);
+		}
+		
 		override public function destroy():void 
 		{
 			super.destroy();
-			
 			world.DestroyBody(body);
 		}
 	}

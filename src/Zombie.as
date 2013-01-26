@@ -9,12 +9,12 @@ package
 	 * ...
 	 * @author bms
 	 */
-	public class Zombie extends FlxB2Sprite 
+	public class Zombie extends FlxB2Sprite implements Damageble
 	{
 		public var player:Player;
 		public var currentState:AIState;
-		public var seekState:ZombieSeek;
-		public var randomState:ZombieRandom;
+		public var seekState:ZombieSeek = new ZombieSeek();
+		public var randomState:ZombieRandom = new ZombieRandom();
 		
 		public function Zombie(X:Number, Y:Number) 
 		{
@@ -25,16 +25,16 @@ package
 			b2LinearDamping = 10;
 			b2Density = 0.5;
 			b2FixedRotation = true;
-			b2Filter.categoryBits |= 2;
+			b2Filter.categoryBits = 2;
 			createCircle();
 			
 			
 			player = (FlxG.state as GameState).player;
-			seekState = new ZombieSeek();
-			randomState = new ZombieRandom();
 			
 			seekState.create(this);
 			randomState.create(this);
+			
+			health = 10;
 			
 			currentState = seekState;
 		}
@@ -43,6 +43,23 @@ package
 		{
 			super.update();
 			currentState.update();
+		}
+		override public function kill():void 
+		{
+			super.kill();
+			(FlxG.state as GameState).gibsDispenser.x = x;
+			(FlxG.state as GameState).gibsDispenser.y = y;
+			(FlxG.state as GameState).gibsDispenser.start(true, 0, 1, 3);
+		}
+		public function doDamage(damage:Number):void 
+		{
+			if (alive)
+			{
+				hurt(damage);
+				(FlxG.state as GameState).bloodDispenser.x = x;
+				(FlxG.state as GameState).bloodDispenser.y = y;
+				(FlxG.state as GameState).bloodDispenser.start(true, 0, 1, 5);
+			}
 		}
 	}
 }

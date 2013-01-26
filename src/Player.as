@@ -10,7 +10,7 @@ package
 	 * ...
 	 * @author bms
 	 */
-	public class Player extends FlxB2Sprite 
+	public class Player extends FlxB2Sprite implements Damageble
 	{
 		public var runCounter:Number = 0;
 		public function Player(X:Number, Y:Number) 
@@ -19,6 +19,7 @@ package
 			
 			// init box2d
 			b2Type = b2Body.b2_dynamicBody;
+			b2Filter.categoryBits = 8;
 			b2LinearDamping = 10;
 			b2FixedRotation = true;
 			createCircle();
@@ -53,6 +54,11 @@ package
 			{
 				runCounter += 1;
 			}
+		}
+		
+		public function doDamage(damage:Number):void 
+		{
+			
 		}
 	}
 }
