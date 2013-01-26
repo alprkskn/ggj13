@@ -57,6 +57,9 @@ package
 		public var gibsDispenser:FlxEmitter = new FlxEmitter(0, 0);
 		public var smokeDispenser:FlxEmitter = new FlxEmitter(0, 0, 10);
 		
+		private var heatBeatCounter:Number = 0;
+		private var heatBeatPeriod:Number = 20;
+		
 		override public function create():void 
 		{
 			super.create();
@@ -69,6 +72,12 @@ package
 			
 			// this is just used for its bitmap layer
 			foreground = new FlxCamera(0, 0, FlxG.width, FlxG.height, 0);
+			
+			var mapdata:MapData = new MapData();
+			mapdata.loadMap(Assets.MAP1_SPRITE, Assets.MAP1_JSON);
+			
+			var mapImage:FlxSprite = new FlxSprite(0, 0, Assets.MAP1_SPRITE);
+			add(mapImage);
 			
 			bloodDispenser.setSize(16, 16);
 			bloodDispenser.setXSpeed(-50, 50);
@@ -86,12 +95,14 @@ package
 			gibsDispenser.makeParticles(Assets.GIBS_SPRITE, 100, 16, true);
 			add(gibsDispenser);
 			
-			
-			for (var i:int = 0; i < 10; i++)
+			var objectCount:int = mapdata.wallVertices.length / 3;
+			for (var i:int = 0; i < objectCount; i++)
 			{
-				var wall:FlxB2Sprite = new FlxB2Sprite(world, Math.random() * FlxG.width, Math.random() * FlxG.height, Assets.WALL_SPRITE);
-				wall.b2Angle = Math.random() * 2 * Math.PI;
-				wall.createBox();
+				var wall:FlxB2Sprite = new FlxB2Sprite(world);
+				wall.b2Position.Set(0, 0);
+				var arr:Array = mapdata.getVerticesOfIndex(i);
+				
+				wall.createPolygon(arr);
 				add(wall);
 			}
 			
@@ -158,10 +169,22 @@ package
 			return 1;
 		}
 		
+		private function heartBeat(x:Number):Number
+		{
+			if (x >= 0 && x <= 3*Math.PI)
+				return Math.sin(x);
+			return 0;
+		}
+		
 		override public function update():void 
 		{
 			super.update();
 			
+			heatBeatCounter += 0.4;
+			if(heatBeatCounter > heatBeatPeriod)
+			{
+				heatBeatCounter = 0;
+			}
 			var mpos:b2Vec2 = new b2Vec2(FlxG.mouse.x, FlxG.mouse.y);
 			mpos.Multiply(1.0 / FlxG.B2SCALE);
 			mpos.Subtract(player.body.GetPosition());
@@ -171,7 +194,7 @@ package
 			{
 				fovRayObject = null;
 				const mr:Number = 12;
-				var fov:Number = (i - 7.5) / (10);
+				var fov:Number = (i - 7.5) / (12-3*heartBeat(heatBeatCounter));
 				var rv:b2Vec2 = b2Math.AddVV(player.body.GetPosition(), new b2Vec2(Math.cos(angle-fov) * mr, Math.sin(angle-fov) * mr));
 				world.RayCast(rayCallback, player.body.GetPosition(), rv);
 				if (fovRayObject != null)
@@ -219,6 +242,7 @@ package
 		{
 			smokeDispenser.x = x;
 			smokeDispenser.y = y;
+			
 			smokeDispenser.start(true, 10, 0, 1);
 			for (var i:int = 0; i < zombies.length; i++)
 			{

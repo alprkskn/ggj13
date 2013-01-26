@@ -14,7 +14,7 @@ package
 		static public const GLOW_SPRITE:Class;
 		[Embed(source="assets/zombie.png")]
 		static public const ZOMBIE_SPRITE:Class;
-		[Embed(source="assets/dispMap.png")]
+		[Embed(source="assets/dispMapGun.png")]
 		static public const DISP_MAP_SPRITE:Class;
 		[Embed(source="assets/bullet.png")]
 		static public const BULLET_SPRITE:Class;
@@ -26,5 +26,10 @@ package
 		static public const BAIT_SPRITE:Class;
 		[Embed(source="assets/smoke.png")]
 		static public const SMOKE_SPRITE:Class;
+		[Embed(source="assets/maps/zaaaImage.png")]
+		static public const MAP1_SPRITE:Class;
+		[Embed(source = "assets/maps/zaaaData.txt",mimeType="application/octet-stream")]
+		static public const MAP1_JSON:Class;
+		
 	}
 }
