@@ -6,6 +6,7 @@ package org.flixel
 	
 	public class FlxB2Sprite extends FlxSprite
 	{
+		private var isPoly:Boolean = false;
 		public var fixtureDef:b2FixtureDef;
 		public var bodyDef:b2BodyDef
 		public var body:b2Body;
@@ -164,11 +165,11 @@ package org.flixel
 				throw("Error: createPolygon: Wrong vertex array");
 			
 			for (var i:int = 0; i < vertices.length; i+=2)
-				vrts.push(new b2Vec2(vertices[i] / FlxG.B2SCALE, vertices[i + 1] / FlxG.B2SCALE));
+				vrts.push(new b2Vec2(Number(vertices[i]) / FlxG.B2SCALE, Number(vertices[i + 1])/ FlxG.B2SCALE));
 			
 			poly.SetAsArray(vrts, vrts.length);
 			b2FixtureShape = poly;
-			
+			isPoly = true;
 			// don't forget
 			createBody();
 		}
@@ -237,9 +238,14 @@ package org.flixel
 		override public function update():void
 		{
 			super.update();
-			
-			x = (body.GetPosition().x * FlxG.B2SCALE) - width*.5 ;
-			y = (body.GetPosition().y * FlxG.B2SCALE) - height*.5;
+			if (isPoly)
+			{
+				x = (body.GetPosition().x * FlxG.B2SCALE);
+				y = (body.GetPosition().y * FlxG.B2SCALE);
+			} else {
+				x = (body.GetPosition().x * FlxG.B2SCALE) - width*.5 ;
+				y = (body.GetPosition().y * FlxG.B2SCALE) - height * .5;
+			}
 			angle = body.GetAngle() * 180 / Math.PI;
 		}
 		

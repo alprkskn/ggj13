@@ -7,6 +7,7 @@ package
 	import flash.display.BitmapDataChannel;
 	import flash.display.BlendMode;
 	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.filters.BlurFilter;
 	import flash.filters.DisplacementMapFilter;
 	import flash.geom.ColorTransform;
@@ -14,6 +15,7 @@ package
 	import flash.geom.Point;
 	import flash.utils.getTimer;
 	import mx.core.BitmapAsset;
+	import mx.core.FlexSprite;
 	import org.flixel.FlxB2Sprite;
 	import org.flixel.FlxB2State;
 	import org.flixel.FlxCamera;
@@ -45,19 +47,38 @@ package
 		{
 			super.create();
 			
+			var mapdata:MapData = new MapData();
+			mapdata.loadMap("eben");
+			
+			var mapImage:FlxSprite = new FlxSprite(0, 0, mapdata.test_map_image);
+			var mapDebug:FlxSprite = new FlxSprite(); //Draws direct input from the editor.
+			mapDebug.makeGraphic(FlxG.width, FlxG.height, 0x00000000);
+			var box2dDebug:DebugDrawSetup = new DebugDrawSetup(world, FlxG.B2SCALE, 1.0, 1, 0.5); //Box2D debug draw.
+			Main.DEBUG.addChild(box2dDebug);
+			add(mapImage);
+			//add(mapDebug);
+			
+			
 			FlxG.bgColor = 0xFF261918;
 			background = FlxG.camera;
 			
 			// this is just used for its bitmap layer
 			foreground = new FlxCamera(0, 0, FlxG.width, FlxG.height, 0);
-			
-			for (var i:int = 0; i < 10; i++)
+			var objectCount:int = mapdata.wallVertices.length / 3;
+			for (var i:int = 0; i < objectCount; i++)
 			{
-				var wall:FlxB2Sprite = new FlxB2Sprite(world, Math.random() * FlxG.width, Math.random() * FlxG.height, Assets.WALL_SPRITE);
-				wall.b2Angle = Math.random() * 2 * Math.PI;
-				wall.createBox();
+				var wall:FlxB2Sprite = new FlxB2Sprite(world);
+				wall.b2Position.Set(0, 0);
+				var arr:Array = mapdata.getVerticesOfIndex(i);
+				
+				mapDebug.drawLine(arr[0], arr[1], arr[2], arr[3], 0xFFFFFFFF, 2);
+				mapDebug.drawLine(arr[2], arr[3], arr[4], arr[5], 0xFFFFFFFF, 2);
+				mapDebug.drawLine(arr[4], arr[5], arr[0], arr[1], 0xFFFFFFFF, 2);
+				
+				
+				wall.createPolygon(arr);
 				add(wall);
-			}
+			}                    1
 			
 			// put this here so zombies can access it
 			player = new Player(FlxG.width / 2, FlxG.height / 2);
@@ -101,7 +122,7 @@ package
 		override public function update():void 
 		{
 			super.update();
-			
+			//world.DrawDebugData();
 			var mpos:b2Vec2 = new b2Vec2(FlxG.mouse.x, FlxG.mouse.y);
 			mpos.Multiply(1.0 / FlxG.B2SCALE);
 			mpos.Subtract(player.body.GetPosition());
@@ -123,7 +144,7 @@ package
 					fovPoints.push(rv);
 				}
 			}
-			
+			//trace("mouse:", FlxG.mouse.x, FlxG.mouse.y);
 			fovShape = new Shape();
 			fovShape.graphics.beginFill(0xFFFFFF, 1);
 			fovShape.graphics.drawCircle(player.getMidpoint().x, player.getMidpoint().y, 12);
