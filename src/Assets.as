@@ -22,6 +22,9 @@ package
 		static public const BLOOD_SPRITE:Class;
 		[Embed(source="assets/gibs.png")]
 		static public const GIBS_SPRITE:Class;
-		
+		[Embed(source="assets/bait.png")]
+		static public const BAIT_SPRITE:Class;
+		[Embed(source="assets/smoke.png")]
+		static public const SMOKE_SPRITE:Class;
 	}
 }

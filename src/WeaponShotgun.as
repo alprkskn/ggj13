@@ -34,6 +34,8 @@ package
 				bulvec.Add(new b2Vec2(Math.random() * 5 - 2.5, Math.random() * 5 - 2.5));
 				bullet = new Bullet(parent.player.getMidpoint().x, parent.player.getMidpoint().y, bulvec);
 				parent.bullets.add(bullet);
+				
+				parent.dispAmount = -50;
 			}
 		}
 	}

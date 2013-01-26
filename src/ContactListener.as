@@ -21,6 +21,16 @@ package
 			var ad:uint = contact.GetFixtureA().GetFilterData().categoryBits;
 			var bd:uint = contact.GetFixtureB().GetFilterData().categoryBits;
 			
+			if ((ad & 8 && bd & 16) || (ad & 16 && bd & 8))
+			{
+				contact.SetEnabled(false);
+			}
+			
+			if ((ad & 8 && bd & 32) || (ad & 32 && bd & 8))
+			{
+				contact.SetEnabled(false);
+			}
+			
 			if ((ad & 8 && bd & 4) || (ad & 4 && bd & 8))
 			{
 				contact.SetEnabled(false);

@@ -6,9 +6,10 @@ package
 	 * ...
 	 * @author bms
 	 */
-	public class WeaponPistol implements AIState 
+	public class WeaponGrenade implements AIState 
 	{
 		private var parent:GameState;
+		private var counter:int = 0;
 		public function create(parent:Object):void 
 		{
 			this.parent = parent as GameState;
@@ -16,18 +17,20 @@ package
 		
 		public function update():void 
 		{
-			if (FlxG.mouse.justPressed())
+			if (FlxG.mouse.pressed() && counter > 100)
 			{
+				counter = 0;
 				var bulvec:b2Vec2 = new b2Vec2(FlxG.mouse.x, FlxG.mouse.y);
 				bulvec.Multiply(1.0 / FlxG.B2SCALE);
 				bulvec.Subtract(parent.player.body.GetPosition());
 				bulvec.Normalize();
-				bulvec.Multiply(30);
+				bulvec.Multiply(15);
 				
-				var bullet:Bullet = new Bullet(parent.player.getMidpoint().x, parent.player.getMidpoint().y, bulvec);
+				var bullet:Explosive = new Explosive(parent.player.getMidpoint().x, parent.player.getMidpoint().y, bulvec);
 				parent.bullets.add(bullet);
-				parent.dispAmount = -40;
 			}
+			counter++;
 		}
 	}
+
 }

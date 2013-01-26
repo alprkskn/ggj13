@@ -14,6 +14,7 @@ package
 		public var player:Player;
 		public var currentState:AIState;
 		public var seekState:ZombieSeek = new ZombieSeek();
+		public var baitState:ZombieBaitRush = new ZombieBaitRush();
 		public var randomState:ZombieRandom = new ZombieRandom();
 		
 		public function Zombie(X:Number, Y:Number) 
@@ -33,6 +34,7 @@ package
 			
 			seekState.create(this);
 			randomState.create(this);
+			baitState.create(this);
 			
 			health = 10;
 			

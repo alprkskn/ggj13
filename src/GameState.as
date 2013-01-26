@@ -9,6 +9,7 @@ package
 	import flash.display.Shape;
 	import flash.filters.BlurFilter;
 	import flash.filters.DisplacementMapFilter;
+	import flash.filters.DisplacementMapFilterMode;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -29,6 +30,7 @@ package
 	 */
 	public class GameState extends FlxB2State 
 	{
+		public var dispAmount:Number = 0;
 		public var player:Player;
 		public var glow:FlxSprite;
 		
@@ -42,14 +44,18 @@ package
 		
 		public var zombies:FlxGroup;
 		public var bullets:FlxGroup;
+		public var baits:FlxGroup;
 		
 		public var weaponState:AIState;
 		public var pistolState:WeaponPistol = new WeaponPistol();
 		public var shotgunState:WeaponShotgun = new WeaponShotgun();
 		public var uziState:WeaponUzi = new WeaponUzi();
+		public var baitState:WeaponBait = new WeaponBait();
+		public var grenadeState:WeaponGrenade = new WeaponGrenade();
 		
 		public var bloodDispenser:FlxEmitter = new FlxEmitter(0, 0);
 		public var gibsDispenser:FlxEmitter = new FlxEmitter(0, 0);
+		public var smokeDispenser:FlxEmitter = new FlxEmitter(0, 0, 10);
 		
 		override public function create():void 
 		{
@@ -76,9 +82,10 @@ package
 			gibsDispenser.setXSpeed( -100, 100);
 			gibsDispenser.setYSpeed( -100, 100);
 			gibsDispenser.particleDrag = new FlxPoint(100, 100);
-			gibsDispenser.setRotation(0, 0);
+			gibsDispenser.setRotation(0, 20);
 			gibsDispenser.makeParticles(Assets.GIBS_SPRITE, 100, 16, true);
 			add(gibsDispenser);
+			
 			
 			for (var i:int = 0; i < 10; i++)
 			{
@@ -90,6 +97,9 @@ package
 			
 			// put this here so zombies can access it
 			player = new Player(FlxG.width / 2, FlxG.height / 2);
+			
+			baits = new FlxGroup();
+			add(baits);
 			
 			zombies = new FlxGroup();
 			for (i = 0; i < 10; i++)
@@ -107,6 +117,16 @@ package
 			glow.offset.y = glow.height * 0.5;
 			add(glow);
 			
+			smokeDispenser.setRotation(0, 0);
+			gibsDispenser.setSize(80, 80);
+			smokeDispenser.setXSpeed( 0, 0);
+			smokeDispenser.setYSpeed( 0, 0);
+			for (var k:int = 0; k < smokeDispenser.maxSize; k++)
+			{
+				smokeDispenser.add(new Smoke());
+			}
+			add(smokeDispenser);
+			
 			add(player);
 			FlxG.camera.follow(player);
 			
@@ -115,13 +135,15 @@ package
 			shotgunState.create(this);
 			uziState.create(this);
 			pistolState.create(this);
+			baitState.create(this);
+			grenadeState.create(this);
 			
-			weaponState = uziState;
+			weaponState = grenadeState;
 		}
 		
 		private function rayCallback(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
 		{
-			if (fixture.GetFilterData().categoryBits & 2 || fixture.GetFilterData().categoryBits & 4)
+			if (fixture.GetFilterData().categoryBits & 2 || fixture.GetFilterData().categoryBits & 32 || fixture.GetFilterData().categoryBits & 4 || fixture.GetFilterData().categoryBits & 16)
 				return 1;
 			
 			if (null == fovRayObject)
@@ -145,11 +167,11 @@ package
 			mpos.Subtract(player.body.GetPosition());
 			var angle:Number = Math.atan2(mpos.y, mpos.x);
 			fovPoints = [];
-			for (var i:int = 0; i < 10; i++)
+			for (var i:int = 0; i < 16; i++)
 			{
 				fovRayObject = null;
 				const mr:Number = 12;
-				var fov:Number = (i - 4.5) / (10);
+				var fov:Number = (i - 7.5) / (10);
 				var rv:b2Vec2 = b2Math.AddVV(player.body.GetPosition(), new b2Vec2(Math.cos(angle-fov) * mr, Math.sin(angle-fov) * mr));
 				world.RayCast(rayCallback, player.body.GetPosition(), rv);
 				if (fovRayObject != null)
@@ -184,7 +206,37 @@ package
 				weaponState = shotgunState;
 			if (FlxG.keys.THREE)
 				weaponState = pistolState;
+			if (FlxG.keys.FOUR)
+				weaponState = baitState;
+			if (FlxG.keys.FIVE)
+				weaponState = grenadeState;
 			weaponState.update();
+			
+			dispAmount += 0.1 * (-dispAmount);
+		}
+		
+		public function explode(x:Number, y:Number):void 
+		{
+			smokeDispenser.x = x;
+			smokeDispenser.y = y;
+			smokeDispenser.start(true, 10, 0, 1);
+			for (var i:int = 0; i < zombies.length; i++)
+			{
+				var zombie:Zombie = zombies.members[i];
+				if (zombie.alive)
+				{
+					var dx:Number = x - zombie.x;
+					var dy:Number = y - zombie.y;
+					var dd:Number = Math.sqrt(dx * dx +dy * dy);
+					if (dd < 100)
+					{
+						zombie.doDamage(5);
+						var force:b2Vec2 = new b2Vec2(dx / dd, dy / dd);
+						force.Multiply(-100);
+						zombie.body.ApplyForce(force, zombie.body.GetPosition());
+					}
+				}
+			}
 		}
 		
 		override public function draw():void 
@@ -198,9 +250,9 @@ package
 			
 			foreground.buffer.draw(fovShape, mat);
 			foreground.buffer.applyFilter(foreground.buffer, foreground.buffer.rect, new Point(), new BlurFilter(30, 30));
-			//background.buffer.threshold(foreground.buffer, foreground.buffer.rect, new Point(), "<=", 0x22222222, 0xFF000000);
-			//var dmf:DisplacementMapFilter = new DisplacementMapFilter(dispMap, new Point(FlxG.width/2-dispMap.width/2,FlxG.height/2-dispMap.height/2), BitmapDataChannel.RED, BitmapDataChannel.GREEN,dispAmount,dispAmount);
-			//background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmf);
+			background.buffer.threshold(foreground.buffer, foreground.buffer.rect, new Point(), "<=", 0x22222222, 0xFF000000);
+			var dmf:DisplacementMapFilter = new DisplacementMapFilter(dispMap, new Point(FlxG.width/2-dispMap.width/2,FlxG.height/2-dispMap.height/2), BitmapDataChannel.RED, BitmapDataChannel.GREEN,dispAmount,dispAmount,DisplacementMapFilterMode.CLAMP);
+			background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmf);
 		}
 	}
 }
