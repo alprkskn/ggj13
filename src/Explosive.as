@@ -15,7 +15,7 @@ package
 		private var counter:int = 0;
 		public function Explosive(X:Number, Y:Number, vel:b2Vec2) 
 		{
-			super((FlxG.state as GameState).world, X, Y, Assets.BAIT_SPRITE);
+			super((FlxG.state as GameState).world, X, Y, Assets.BOMB_SPRITE);
 			
 			// init box2d
 			b2Type = b2Body.b2_dynamicBody;

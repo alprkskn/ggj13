@@ -34,26 +34,34 @@ package
 		static public const BOX1_SPRITE:Class;
 		[Embed(source="assets/boxSmall.png")]
 		static public const BOX2_SPRITE:Class;
-		[Embed(source="assets/bait.png")]
+		[Embed(source="assets/ammo.png")]
 		static public const SHOTGUN_ICON_SPRITE:Class;
-		[Embed(source="assets/bait.png")]
+		[Embed(source="assets/ammo.png")]
 		static public const PISTOL_ICON_SPRITE:Class;
 		[Embed(source="assets/bait.png")]
 		static public const BAIT_ICON_SPRITE:Class;
-		[Embed(source="assets/bait.png")]
+		[Embed(source="assets/ammo.png")]
 		static public const UZI_ICON_SPRITE:Class;
-		[Embed(source="assets/bait.png")]
+		[Embed(source="assets/ammo.png")]
 		static public const BOMB_ICON_SPRITE:Class;
 		[Embed(source="assets/boxGibs.png")]
 		static public const BOX_GIBS_SPRITE:Class;
 		[Embed(source="assets/barrel.png")]
 		static public const BARREL_SPRITE:Class;
-
+		[Embed(source="assets/grenade.png")]
+		static public const BOMB_SPRITE:Class;
+		[Embed(source="assets/main.png")]
+		static public const MAIN_SPRITE:Class;
 		
 		[Embed(source="assets/maps/map01_img.png")]
 		static public const MAP1_SPRITE:Class;
 		[Embed(source = "assets/maps/map01_data.txt", mimeType="application/octet-stream")]
 		static public const MAP1_JSON:Class;
+		
+		[Embed(source="assets/maps/map02_img.png")]
+		static public const MAP2_SPRITE:Class;
+		[Embed(source = "assets/maps/map02_data.txt", mimeType="application/octet-stream")]
+		static public const MAP2_JSON:Class;
 		
 		[Embed(source="assets/sound/Heart.mp3")]
 		static public const HEARTBEAT_SOUND:Class;

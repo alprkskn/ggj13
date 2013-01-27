@@ -58,7 +58,7 @@ package
 					return;
 				}
 				parent.angle = Math.atan2(dy, dx) * 180 / Math.PI+10*Math.sin(counter);
-				parent.body.ApplyForce(new b2Vec2( dx / dd * 5, dy / dd * 5), parent.body.GetPosition());
+				parent.body.ApplyForce(new b2Vec2( dx / dd * 3, dy / dd * 3), parent.body.GetPosition());
 			} else
 			{
 				target = null;

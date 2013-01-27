@@ -29,7 +29,6 @@ package
 			b2Filter.categoryBits = 2;
 			createCircle(8);
 			
-			
 			player = (FlxG.state as GameState).player;
 			
 			seekState.create(this);

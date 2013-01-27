@@ -39,12 +39,12 @@ package
 				var dx:Number = parent.player.body.GetPosition().x - parent.body.GetPosition().x;
 				var dy:Number = parent.player.body.GetPosition().y - parent.body.GetPosition().y;
 				var dd:Number = Math.sqrt(dx * dx + dy * dy);
-				if (dd > 15)
+				if (dd > 10)
 				{
 					parent.currentState = parent.randomState;
 					return;
 				}
-				parent.body.ApplyForce(new b2Vec2( dx / dd * 5, dy / dd * 5), parent.body.GetPosition());
+				parent.body.ApplyForce(new b2Vec2( dx / dd * 4.5, dy / dd * 4.5), parent.body.GetPosition());
 				parent.angle = Math.atan2(dy, dx) * 180 / Math.PI+10*Math.sin(counter);
 			} else
 			{

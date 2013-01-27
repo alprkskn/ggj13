@@ -87,14 +87,14 @@ package
 			foreground = new FlxCamera(0, 0, FlxG.width, FlxG.height, 0);
 			
 			var mapdata:MapData = new MapData();
-			mapdata.loadMap(Assets.MAP1_SPRITE, Assets.MAP1_JSON);
+			mapdata.loadMap(Globals.LEVELS[Globals.LEVEL].img, Globals.LEVELS[Globals.LEVEL].data);
 			
-			var mapImage:FlxSprite = new FlxSprite(0, 0, Assets.MAP1_SPRITE);
+			var mapImage:FlxSprite = new FlxSprite(0, 0, Globals.LEVELS[Globals.LEVEL].img);
 			add(mapImage);
 			
 			bloodDispenser.setSize(16, 16);
-			bloodDispenser.setXSpeed(-50, 50);
-			bloodDispenser.setYSpeed( -50, 50);
+			bloodDispenser.setXSpeed(-10, 10);
+			bloodDispenser.setYSpeed( -10, 10);
 			bloodDispenser.particleDrag = new FlxPoint(100, 100);
 			bloodDispenser.setRotation(0, 0);
 			bloodDispenser.makeParticles(Assets.BLOOD_SPRITE, 500, 16, true);
@@ -204,10 +204,8 @@ package
 			weaponState = grenadeState;
 			
 			noiseSound = FlxG.play(Assets.NOISE_SOUND, 0, true);
-			FlxG.playMusic(Assets.MUSIC_SOUND);
 			
 			inventory = new FlxText(0, 0, FlxG.width, "");
-			//inventory.alignment = "center";
 			add(inventory);
 		}
 		
@@ -322,14 +320,24 @@ package
 				{
 					box.kill();
 					trace((box as GroundItem).content);
-					Globals.AMMO[(box as GroundItem).content] += 15;
+					Globals.AMMO[(box as GroundItem).content] += 10;
 				}
 			}
-			inventory.text = "[1] pistol x" + Globals.AMMO["pistol"] + "\n";
-			inventory.text += "[2] shotgun x" + Globals.AMMO["shotgun"] + "\n";
-			inventory.text += "[3] smg x" + Globals.AMMO["uzi"] + "\n";
-			inventory.text += "[4] brains x" + Globals.AMMO["bait"] + "\n";
-			inventory.text += "[5] grenade x" + Globals.AMMO["bomb"];
+			if (player.alive)
+			{
+				inventory.text = "[1] pistol x" + Globals.AMMO["pistol"] + "\n";
+				inventory.text += "[2] shotgun x" + Globals.AMMO["shotgun"] + "\n";
+				inventory.text += "[3] smg x" + Globals.AMMO["uzi"] + "\n";
+				inventory.text += "[4] brains x" + Globals.AMMO["bait"] + "\n";
+				inventory.text += "[5] grenade x" + Globals.AMMO["bomb"];
+			} else
+			{
+				inventory.text = "you died. press space";
+				if (FlxG.keys.SPACE)
+				{
+					FlxG.resetState();
+				}
+			}
 		}
 		
 		public function explode(x:Number, y:Number):void 
@@ -388,6 +396,17 @@ package
 							box.doDamage(100);
 						}
 					}
+				}
+			}
+			if (levelFinishPoint)
+			{
+				dx = player.x - levelFinishPoint.x;
+				dy = player.y - levelFinishPoint.y;
+				dd = Math.sqrt(dx * dx + dy * dy);
+				if (dd < 30)
+				{
+					//Globals.LEVEL++;
+					FlxG.resetState();
 				}
 			}
 		}

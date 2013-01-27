@@ -32,6 +32,12 @@ package
 		override public function update():void 
 		{
 			super.update();
+			if (Math.random() < 0.08)
+			{
+				(FlxG.state as GameState).bloodDispenser.x = x-width;
+				(FlxG.state as GameState).bloodDispenser.y = y-height;
+				(FlxG.state as GameState).bloodDispenser.start(true, 0, 1, 1);
+			}
 			if (counter > 500)
 			{
 				kill();
