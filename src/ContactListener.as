@@ -60,6 +60,12 @@ package
 					(bu as Damageble).doDamage(1);
 				}
 			}
+			// bullet hit box
+			if ((ad & 64 && bd & 4) || (ad & 4 && bd & 64))
+			{
+				(au as Damageble).doDamage(1);
+				(bu as Damageble).doDamage(1);
+			}
 			// bullet hit zombie
 			if ((ad & 2 && bd & 4) || (ad & 4 && bd & 2))
 			{

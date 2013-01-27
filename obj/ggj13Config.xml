@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'26.01.2013'</value>
+      <value>'27.01.2013'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -41,7 +41,7 @@
   <file-specs>
     <path-element>C:\Users\mikesoylu\Documents\flash\ggj13\src\Main.as</path-element>
   </file-specs>
-  <default-background-color>#FFFFFF</default-background-color>
+  <default-background-color>#000000</default-background-color>
   <default-frame-rate>30</default-frame-rate>
   <default-size>
     <width>640</width>

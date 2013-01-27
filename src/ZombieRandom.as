@@ -9,6 +9,7 @@ package
 	{
 		private var parent:Zombie;
 		private var angle:Number = 0;
+		
 		public function create(parent:Object):void 
 		{
 			this.parent = parent as Zombie;

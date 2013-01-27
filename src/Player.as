@@ -13,8 +13,9 @@ package
 	public class Player extends FlxB2Sprite implements Damageble
 	{
 		public var runCounter:Number = 0;
-		public const MAX_HEALTH:int = 80;
+		public const MAX_HEALTH:int = 60;
 		
+		private var hurtCounter:int = 0;
 		public function Player(X:Number, Y:Number) 
 		{
 			super((FlxG.state as GameState).world, X, Y, Assets.PLAYER_SPRITE);
@@ -69,12 +70,17 @@ package
 			mpos.Multiply(1.0 / FlxG.B2SCALE);
 			mpos.Subtract(body.GetPosition());
 			var angle:Number = Math.atan2(mpos.y, mpos.x);
-			this.angle = angle * 180 / Math.PI+Math.sin(runCounter/5)*10;
+			this.angle = angle * 180 / Math.PI + Math.sin(runCounter / 5) * 10;
+			hurtCounter++;
 		}
 		
 		public function doDamage(damage:Number):void 
 		{
-			hurt(damage);
+			if (hurtCounter > 2)
+			{
+				hurt(damage);
+				hurtCounter = 0;
+			}
 		}
 	}
 }

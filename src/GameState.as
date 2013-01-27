@@ -17,11 +17,13 @@ package
 	import mx.core.BitmapAsset;
 	import org.flixel.FlxB2Sprite;
 	import org.flixel.FlxB2State;
+	import org.flixel.FlxBasic;
 	import org.flixel.FlxCamera;
 	import org.flixel.FlxEmitter;
 	import org.flixel.FlxG;
 	import org.flixel.FlxGroup;
 	import org.flixel.FlxPoint;
+	import org.flixel.FlxSound;
 	import org.flixel.FlxSprite;
 	
 	/**
@@ -48,6 +50,7 @@ package
 		public var zombies:FlxGroup;
 		public var bullets:FlxGroup;
 		public var baits:FlxGroup;
+		public var boxes:FlxGroup;
 		
 		public var weaponState:AIState;
 		public var pistolState:WeaponPistol = new WeaponPistol();
@@ -58,12 +61,14 @@ package
 		
 		public var bloodDispenser:FlxEmitter = new FlxEmitter(0, 0);
 		public var gibsDispenser:FlxEmitter = new FlxEmitter(0, 0);
+		public var boxDispenser:FlxEmitter = new FlxEmitter(0, 0);
 		public var smokeDispenser:FlxEmitter = new FlxEmitter(0, 0, 10);
 		
 		private var heatBeatCounter:Number = 0;
 		private var heatBeatPeriod:Number = 10;
 		
 		private var levelFinishPoint:FlxPoint;
+		private var noiseSound:FlxSound;
 		
 		override public function create():void 
 		{
@@ -92,6 +97,14 @@ package
 			bloodDispenser.makeParticles(Assets.BLOOD_SPRITE, 500, 16, true);
 			add(bloodDispenser);
 			
+			boxDispenser.setSize(16, 16);
+			boxDispenser.setXSpeed(-80, 80);
+			boxDispenser.setYSpeed( -80, 80);
+			boxDispenser.particleDrag = new FlxPoint(50, 50);
+			boxDispenser.setRotation(0, 0);
+			boxDispenser.makeParticles(Assets.BOX_GIBS_SPRITE, 200, 16, true);
+			add(boxDispenser);
+			
 			gibsDispenser.setSize(16, 16);
 			gibsDispenser.setXSpeed( -100, 100);
 			gibsDispenser.setYSpeed( -100, 100);
@@ -111,6 +124,9 @@ package
 				add(wall);
 			}
 			
+			boxes = new FlxGroup();
+			add(boxes);
+			
 			// put this here so zombies can access it
 			player = new Player(FlxG.width / 2, FlxG.height / 2);
 			
@@ -125,14 +141,22 @@ package
 			{
 				if ("playerSpawner" == mapdata.entities[i].name)
 				{
-						player.body.SetPosition(new b2Vec2(mapdata.entities[i].x / FlxG.B2SCALE, mapdata.entities[i].y / FlxG.B2SCALE));
+					player.body.SetPosition(new b2Vec2(mapdata.entities[i].x / FlxG.B2SCALE, mapdata.entities[i].y / FlxG.B2SCALE));
 				} else if ("zombieSpawner" == mapdata.entities[i].name)
 				{
-						var zombie:Zombie = new Zombie(mapdata.entities[i].x, mapdata.entities[i].y);
-						zombies.add(zombie);
+					var zombie:Zombie = new Zombie(mapdata.entities[i].x, mapdata.entities[i].y);
+					zombies.add(zombie);
 				} else if ("levelFinish" == mapdata.entities[i].name)
 				{
-						levelFinishPoint = new FlxPoint(mapdata.entities[i].x, mapdata.entities[i].y);
+					levelFinishPoint = new FlxPoint(mapdata.entities[i].x, mapdata.entities[i].y);
+				} else if ("chest" == mapdata.entities[i].name)
+				{
+					var box:Box = new Box(mapdata.entities[i].x, mapdata.entities[i].y,  mapdata.entities[i].content);
+					boxes.add(box);
+				} else if ("bait" == mapdata.entities[i].name)
+				{
+					var gi:GroundItem = new GroundItem(mapdata.entities[i].x, mapdata.entities[i].y, mapdata.entities[i].name);
+					boxes.add(gi);
 				}
 			}
 			
@@ -169,12 +193,13 @@ package
 			
 			weaponState = grenadeState;
 			
-			FlxG.playMusic(Assets.NOISE_SOUND, 0);
+			noiseSound = FlxG.play(Assets.NOISE_SOUND, 0, true);
+			FlxG.playMusic(Assets.MUSIC_SOUND);
 		}
 		
 		private function rayCallback(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
 		{
-			if (fixture.GetFilterData().categoryBits & 2 || fixture.GetFilterData().categoryBits & 32 || fixture.GetFilterData().categoryBits & 4 || fixture.GetFilterData().categoryBits & 16)
+			if (fixture.GetFilterData().categoryBits & 64 || fixture.GetFilterData().categoryBits & 2 || fixture.GetFilterData().categoryBits & 32 || fixture.GetFilterData().categoryBits & 4 || fixture.GetFilterData().categoryBits & 16)
 				return 1;
 			
 			if (null == fovRayObject)
@@ -200,7 +225,7 @@ package
 		{
 			super.update();
 			
-			FlxG.music.volume = 0.5*(1 - (player.health / player.MAX_HEALTH));
+			noiseSound.volume = 0.5*(1 - (player.health / player.MAX_HEALTH));
 			
 			heatBeatPeriod = Math.max(player.health, 20)/2;
 			
@@ -237,18 +262,20 @@ package
 			}
 			
 			fovShape = new Shape();
-			fovShape.graphics.beginFill(0xFFFFFF, 1);
-			fovShape.graphics.drawCircle(player.getMidpoint().x, player.getMidpoint().y, 12);
-			fovShape.graphics.endFill();
-			
-			fovShape.graphics.beginFill(0xFFFFFF, 1);
-			fovShape.graphics.moveTo(player.getMidpoint().x, player.getMidpoint().y);
-			for (i = 0; i < fovPoints.length; i++ )
+			if (player.alive)
 			{
-				fovShape.graphics.lineTo(fovPoints[i].x, fovPoints[i].y);
+				fovShape.graphics.beginFill(0xFFFFFF, 1);
+				fovShape.graphics.drawCircle(player.getMidpoint().x, player.getMidpoint().y, 12);
+				fovShape.graphics.endFill();
+				
+				fovShape.graphics.beginFill(0xFFFFFF, 1);
+				fovShape.graphics.moveTo(player.getMidpoint().x, player.getMidpoint().y);
+				for (i = 0; i < fovPoints.length; i++ )
+				{
+					fovShape.graphics.lineTo(fovPoints[i].x, fovPoints[i].y);
+				}
+				fovShape.graphics.endFill();
 			}
-			fovShape.graphics.endFill();
-			
 			glow.x = player.getMidpoint().x;
 			glow.y = player.getMidpoint().y;
 			
@@ -265,7 +292,26 @@ package
 			weaponState.update();
 			
 			dispAmount += 0.1 * (-dispAmount);
-			expDispAmount += 0.1 * (-expDispAmount);
+			expDispAmount += 0.1 * ( -expDispAmount);
+			
+			for each(var box:FlxSprite in boxes.members)
+			{
+				if (!box.alive)
+				{
+					continue;
+				}
+				
+				var dx:Number = player.getMidpoint().x - box.getMidpoint().x;
+				var dy:Number = player.getMidpoint().y - box.getMidpoint().y;
+				var dd:Number = Math.sqrt(dx * dx + dy * dy);
+				if (dd < 20 && box is GroundItem)
+				{
+					box.kill();
+					trace((box as GroundItem).content);
+					Globals.AMMO[(box as GroundItem).content] += 15;
+				}
+			}
+			
 		}
 		
 		public function explode(x:Number, y:Number):void 
@@ -282,10 +328,10 @@ package
 				{
 					var dx:Number = x - zombie.x;
 					var dy:Number = y - zombie.y;
-					var dd:Number = Math.sqrt(dx * dx +dy * dy);
+					var dd:Number = Math.sqrt(dx * dx + dy * dy);
 					if (dd < 100)
 					{
-						zombie.doDamage(5);
+						zombie.doDamage(8);
 						var force:b2Vec2 = new b2Vec2(dx / dd, dy / dd);
 						force.Multiply(-100);
 						zombie.body.ApplyForce(force, zombie.body.GetPosition());
@@ -315,7 +361,6 @@ package
 			
 			background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmfExp);
 			background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmf);
-			
 			
 		}
 	}

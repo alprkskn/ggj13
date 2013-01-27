@@ -35,7 +35,7 @@ package {
 			
 			for each(o in dt.entities)
 			{
-				entities.push( { "name":o.name, "x":o.pos.x, "y":o.pos.y } );
+				entities.push( { "name":o.name, "x":o.pos.x, "y":o.pos.y, "content":o.content } );
 			}
 		}
 		

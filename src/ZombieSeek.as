@@ -1,6 +1,8 @@
 package  
 {
 	import Box2D.Common.Math.b2Vec2;
+	import flash.utils.getTimer;
+	import org.flixel.FlxG;
 	import org.flixel.FlxState;
 	/**
 	 * ...
@@ -9,14 +11,17 @@ package
 	public class ZombieSeek implements AIState 
 	{
 		private var parent:Zombie;
+		private var counter:Number = 0;
 		
 		public function create(parent:Object):void 
 		{
 			this.parent = parent as Zombie;
+			counter = Math.random() * 100;
 		}
 		
 		public function update():void 
 		{
+			counter += 0.1;
 			if (parent.player.alive)
 			{
 				var dx:Number = parent.player.body.GetPosition().x - parent.body.GetPosition().x;
@@ -28,8 +33,7 @@ package
 					return;
 				}
 				parent.body.ApplyForce(new b2Vec2( dx / dd * 5, dy / dd * 5), parent.body.GetPosition());
-				
-				parent.angle = Math.atan2(dy, dx) * 180 / Math.PI;
+				parent.angle = Math.atan2(dy, dx) * 180 / Math.PI+10*Math.sin(counter);
 			} else
 			{
 				parent.currentState = parent.randomState;

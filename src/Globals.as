@@ -6,7 +6,7 @@ package
 	 */
 	public class Globals 
 	{
-		public static var AMMO:Object = { "grenade":40, "pistol":40, "uzi":40, "shotgun":40, "bait":40 };
+		public static var AMMO:Object = { "bomb":10, "pistol":10, "uzi":10, "shotgun":10, "bait":10 };
 		
 		static public function checkAmmo(string:String):Boolean 
 		{

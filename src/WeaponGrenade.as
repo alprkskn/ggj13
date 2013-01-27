@@ -9,7 +9,7 @@ package
 	public class WeaponGrenade implements AIState 
 	{
 		private var parent:GameState;
-		private var counter:int = 0;
+		private var counter:int = 100;
 		public function create(parent:Object):void 
 		{
 			this.parent = parent as GameState;
@@ -17,7 +17,7 @@ package
 		
 		public function update():void 
 		{
-			if (FlxG.mouse.pressed() && counter > 100 && Globals.checkAmmo("grenade"))
+			if (FlxG.mouse.pressed() && counter > 100 && Globals.checkAmmo("bomb"))
 			{
 				counter = 0;
 				var bulvec:b2Vec2 = new b2Vec2(FlxG.mouse.x, FlxG.mouse.y);
