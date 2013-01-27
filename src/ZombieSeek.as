@@ -22,6 +22,18 @@ package
 		public function update():void 
 		{
 			counter += 0.1;
+			if (Math.random() < 0.0008)
+			{
+				FlxG.play(Assets.ZOMBIE1_SOUND, 0.1);
+			}
+			if (Math.random() < 0.0008)
+			{
+				FlxG.play(Assets.ZOMBIE2_SOUND, 0.1);
+			}
+			if (Math.random() < 0.0008)
+			{
+				FlxG.play(Assets.ZOMBIE3_SOUND, 0.1);
+			}
 			if (parent.player.alive)
 			{
 				var dx:Number = parent.player.body.GetPosition().x - parent.body.GetPosition().x;

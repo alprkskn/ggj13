@@ -60,6 +60,12 @@ package
 					(bu as Damageble).doDamage(1);
 				}
 			}
+			// bullet hit barrel
+			if ((ad & 128 && bd & 4) || (ad & 4 && bd & 128))
+			{
+				(au as Damageble).doDamage(1);
+				(bu as Damageble).doDamage(1);
+			}
 			// bullet hit box
 			if ((ad & 64 && bd & 4) || (ad & 4 && bd & 64))
 			{

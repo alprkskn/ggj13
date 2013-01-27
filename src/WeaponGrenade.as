@@ -28,6 +28,7 @@ package
 				
 				var bullet:Explosive = new Explosive(parent.player.getMidpoint().x, parent.player.getMidpoint().y, bulvec);
 				parent.bullets.add(bullet);
+				FlxG.play(Assets.BOMB_SOUND, 0.3);
 			}
 			counter++;
 		}

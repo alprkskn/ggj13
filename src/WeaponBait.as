@@ -36,6 +36,7 @@ package
 					}
 				}
 				counter = 0;
+				FlxG.play(Assets.BAIT_SOUND, 0.4);
 			}
 			counter++;
 		}

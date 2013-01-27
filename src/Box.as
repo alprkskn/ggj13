@@ -15,12 +15,12 @@ package
 		public function Box(X:Number, Y:Number, content:String) 
 		{
 			var ic:Class;
-			if (Math.random() > .5)
-			{
-				ic = Assets.BOX1_SPRITE;
-			} else
+			if (content)
 			{
 				ic = Assets.BOX2_SPRITE;
+			} else
+			{
+				ic = Assets.BOX1_SPRITE;
 			}
 			
 			super((FlxG.state as GameState).world, X, Y, ic);
@@ -34,6 +34,14 @@ package
 			b2LinearDamping = 3;
 			createBox();
 			
+			if (content)
+			{
+				health = 1;
+			} else
+			{
+				health = 100;
+			}
+			
 			this.content = content;
 		}
 		override public function kill():void 
@@ -41,7 +49,9 @@ package
 			super.kill();
 			
 			trace(content);
-			
+			(FlxG.state as GameState).boxDispenser.x = x;
+			(FlxG.state as GameState).boxDispenser.y = y;
+			(FlxG.state as GameState).boxDispenser.start(true, 3, 1, 5);
 			if (content)
 			{
 				(FlxG.state as GameState).boxes.add(new GroundItem(x, y, content));
@@ -49,15 +59,9 @@ package
 			}
 		}
 		
-		public function doDamage(damage:Number):void 
+		public function doDamage(damage:Number):void
 		{
-			if (alive)
-			{
-				kill();
-				(FlxG.state as GameState).boxDispenser.x = x;
-				(FlxG.state as GameState).boxDispenser.y = y;
-				(FlxG.state as GameState).boxDispenser.start(true, 3, 1, 5);
-			}
+			hurt(damage);
 		}
 	}
 

@@ -46,6 +46,8 @@ package
 		static public const BOMB_ICON_SPRITE:Class;
 		[Embed(source="assets/boxGibs.png")]
 		static public const BOX_GIBS_SPRITE:Class;
+		[Embed(source="assets/barrel.png")]
+		static public const BARREL_SPRITE:Class;
 
 		
 		[Embed(source="assets/maps/weaponzTestImg.png")]
@@ -71,6 +73,11 @@ package
 		static public const ZOMBIE3_SOUND:Class;
 		[Embed(source="assets/sound/music.mp3")]
 		static public const MUSIC_SOUND:Class;
+		[Embed(source="assets/sound/bait.mp3")]
+		static public const BAIT_SOUND:Class;
+		[Embed(source="assets/sound/bombFloor.mp3")]
+		static public const BOMB_SOUND:Class;
+		
 		
 		
 		static public const WEAPON_SPRITES:Object = { "bait":BAIT_ICON_SPRITE, "pistol":PISTOL_ICON_SPRITE, "uzi":UZI_ICON_SPRITE, "bomb":BOMB_ICON_SPRITE, "shotgun":SHOTGUN_ICON_SPRITE };

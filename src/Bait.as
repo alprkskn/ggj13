@@ -32,7 +32,7 @@ package
 		override public function update():void 
 		{
 			super.update();
-			if (counter > 100)
+			if (counter > 500)
 			{
 				kill();
 			}

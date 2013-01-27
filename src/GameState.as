@@ -51,7 +51,8 @@ package
 		public var bullets:FlxGroup;
 		public var baits:FlxGroup;
 		public var boxes:FlxGroup;
-		
+		public var barrels:FlxGroup;
+
 		public var weaponState:AIState;
 		public var pistolState:WeaponPistol = new WeaponPistol();
 		public var shotgunState:WeaponShotgun = new WeaponShotgun();
@@ -127,6 +128,9 @@ package
 			boxes = new FlxGroup();
 			add(boxes);
 			
+			barrels = new FlxGroup();
+			add(barrels);
+			
 			// put this here so zombies can access it
 			player = new Player(FlxG.width / 2, FlxG.height / 2);
 			
@@ -157,6 +161,10 @@ package
 				{
 					var gi:GroundItem = new GroundItem(mapdata.entities[i].x, mapdata.entities[i].y, mapdata.entities[i].name);
 					boxes.add(gi);
+				} else if ("barrel" == mapdata.entities[i].name)
+				{
+					var bar:Barrel = new Barrel(mapdata.entities[i].x, mapdata.entities[i].y);
+					barrels.add(bar);
 				}
 			}
 			
@@ -199,7 +207,7 @@ package
 		
 		private function rayCallback(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
 		{
-			if (fixture.GetFilterData().categoryBits & 64 || fixture.GetFilterData().categoryBits & 2 || fixture.GetFilterData().categoryBits & 32 || fixture.GetFilterData().categoryBits & 4 || fixture.GetFilterData().categoryBits & 16)
+			if (fixture.GetFilterData().categoryBits & 128 || fixture.GetFilterData().categoryBits & 64 || fixture.GetFilterData().categoryBits & 2 || fixture.GetFilterData().categoryBits & 32 || fixture.GetFilterData().categoryBits & 4 || fixture.GetFilterData().categoryBits & 16)
 				return 1;
 			
 			if (null == fovRayObject)
@@ -333,8 +341,42 @@ package
 					{
 						zombie.doDamage(8);
 						var force:b2Vec2 = new b2Vec2(dx / dd, dy / dd);
-						force.Multiply(-100);
+						force.Multiply(-200);
 						zombie.body.ApplyForce(force, zombie.body.GetPosition());
+					}
+				}
+			}
+			for (i = 0; i < barrels.length; i++)
+			{
+				if (barrels.members[i] is Barrel)
+				{
+					var barrel:Barrel= barrels.members[i];
+					if (barrel.alive)
+					{
+						dx = x - barrel.x;
+						dy = y - barrel.y;
+						dd = Math.sqrt(dx * dx + dy * dy);
+						if (dd < 100)
+						{
+							barrel.doDamage(100);
+						}
+					}
+				}
+			}
+			for (i = 0; i < boxes.length; i++)
+			{
+				if (boxes.members[i] is Box)
+				{
+					var box:Box = boxes.members[i];
+					if (box.alive)
+					{
+						dx = x - box.x;
+						dy = y - box.y;
+						dd = Math.sqrt(dx * dx + dy * dy);
+						if (dd < 100)
+						{
+							box.doDamage(100);
+						}
 					}
 				}
 			}
