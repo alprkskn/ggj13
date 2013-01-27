@@ -9,7 +9,7 @@ package
 	public class WeaponUzi implements AIState 
 	{
 		private var parent:GameState;
-		private var counter:int = 0;
+		private var counter:int = 5;
 		public function create(parent:Object):void 
 		{
 			this.parent = parent as GameState;

@@ -25,6 +25,7 @@ package
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSound;
 	import org.flixel.FlxSprite;
+	import org.flixel.FlxText;
 	
 	/**
 	 * ...
@@ -70,6 +71,7 @@ package
 		
 		private var levelFinishPoint:FlxPoint;
 		private var noiseSound:FlxSound;
+		private var inventory:FlxText;
 		
 		override public function create():void 
 		{
@@ -203,6 +205,10 @@ package
 			
 			noiseSound = FlxG.play(Assets.NOISE_SOUND, 0, true);
 			FlxG.playMusic(Assets.MUSIC_SOUND);
+			
+			inventory = new FlxText(0, 0, FlxG.width, "");
+			//inventory.alignment = "center";
+			add(inventory);
 		}
 		
 		private function rayCallback(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
@@ -287,11 +293,11 @@ package
 			glow.x = player.getMidpoint().x;
 			glow.y = player.getMidpoint().y;
 			
-			if (FlxG.keys.ONE)
+			if (FlxG.keys.THREE)
 				weaponState = uziState;
 			if (FlxG.keys.TWO)
 				weaponState = shotgunState;
-			if (FlxG.keys.THREE)
+			if (FlxG.keys.ONE)
 				weaponState = pistolState;
 			if (FlxG.keys.FOUR)
 				weaponState = baitState;
@@ -319,7 +325,11 @@ package
 					Globals.AMMO[(box as GroundItem).content] += 15;
 				}
 			}
-			
+			inventory.text = "[1] pistol x" + Globals.AMMO["pistol"] + "\n";
+			inventory.text += "[2] shotgun x" + Globals.AMMO["shotgun"] + "\n";
+			inventory.text += "[3] smg x" + Globals.AMMO["uzi"] + "\n";
+			inventory.text += "[4] brains x" + Globals.AMMO["bait"] + "\n";
+			inventory.text += "[5] grenade x" + Globals.AMMO["bomb"];
 		}
 		
 		public function explode(x:Number, y:Number):void 
@@ -404,6 +414,9 @@ package
 			background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmfExp);
 			background.buffer.applyFilter(background.buffer, background.buffer.rect, new Point(), dmf);
 			
+			mat = new Matrix();
+			mat.translate(10, 10);
+			background.buffer.draw(inventory.pixels, mat);
 		}
 	}
 }

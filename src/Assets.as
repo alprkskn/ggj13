@@ -50,9 +50,9 @@ package
 		static public const BARREL_SPRITE:Class;
 
 		
-		[Embed(source="assets/maps/weaponzTestImg.png")]
+		[Embed(source="assets/maps/map01_img.png")]
 		static public const MAP1_SPRITE:Class;
-		[Embed(source = "assets/maps/weaponzTestData.txt", mimeType="application/octet-stream")]
+		[Embed(source = "assets/maps/map01_data.txt", mimeType="application/octet-stream")]
 		static public const MAP1_JSON:Class;
 		
 		[Embed(source="assets/sound/Heart.mp3")]
