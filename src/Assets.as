@@ -52,16 +52,23 @@ package
 		static public const BOMB_SPRITE:Class;
 		[Embed(source="assets/main.png")]
 		static public const MAIN_SPRITE:Class;
-		
-		[Embed(source="assets/maps/map01_img.png")]
-		static public const MAP1_SPRITE:Class;
-		[Embed(source = "assets/maps/map01_data.txt", mimeType="application/octet-stream")]
-		static public const MAP1_JSON:Class;
+		[Embed(source="assets/quote.png")]
+		static public const QUOTE_SPRITE:Class;
 		
 		[Embed(source="assets/maps/map02_img.png")]
-		static public const MAP2_SPRITE:Class;
+		static public const MAP1_SPRITE:Class;
 		[Embed(source = "assets/maps/map02_data.txt", mimeType="application/octet-stream")]
+		static public const MAP1_JSON:Class;
+		
+		[Embed(source="assets/maps/map01_img.png")]
+		static public const MAP2_SPRITE:Class;
+		[Embed(source = "assets/maps/map01_data.txt", mimeType="application/octet-stream")]
 		static public const MAP2_JSON:Class;
+		
+		[Embed(source="assets/maps/map03_img.png")]
+		static public const MAP3_SPRITE:Class;
+		[Embed(source = "assets/maps/map03_data.txt", mimeType="application/octet-stream")]
+		static public const MAP3_JSON:Class;
 		
 		[Embed(source="assets/sound/Heart.mp3")]
 		static public const HEARTBEAT_SOUND:Class;

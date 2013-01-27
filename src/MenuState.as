@@ -51,7 +51,7 @@ package
 			
 			if (FlxG.keys.SPACE)
 			{
-				FlxG.switchState(new GameState());
+				FlxG.switchState(new QuoteState());
 			}
 		}
 		

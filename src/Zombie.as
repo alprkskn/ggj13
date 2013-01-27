@@ -35,7 +35,7 @@ package
 			randomState.create(this);
 			baitState.create(this);
 			
-			health = 10;
+			health = 5;
 			
 			updateAngle = false;
 			

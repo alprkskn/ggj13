@@ -26,6 +26,7 @@ package
 	import org.flixel.FlxSound;
 	import org.flixel.FlxSprite;
 	import org.flixel.FlxText;
+	import org.flixel.FlxTimer;
 	
 	/**
 	 * ...
@@ -72,12 +73,12 @@ package
 		private var levelFinishPoint:FlxPoint;
 		private var noiseSound:FlxSound;
 		private var inventory:FlxText;
+		private var endGame:Boolean = false;
 		
 		override public function create():void 
 		{
 			super.create();
 			
-			FlxG.bgColor = 0xFF261918;
 			background = FlxG.camera;
 			
 			var contactListener:ContactListener = new ContactListener();
@@ -155,6 +156,7 @@ package
 				} else if ("levelFinish" == mapdata.entities[i].name)
 				{
 					levelFinishPoint = new FlxPoint(mapdata.entities[i].x, mapdata.entities[i].y);
+					trace(mapdata.entities[i].x, mapdata.entities[i].y);
 				} else if ("chest" == mapdata.entities[i].name)
 				{
 					var box:Box = new Box(mapdata.entities[i].x, mapdata.entities[i].y,  mapdata.entities[i].content);
@@ -201,12 +203,13 @@ package
 			baitState.create(this);
 			grenadeState.create(this);
 			
-			weaponState = grenadeState;
+			weaponState = pistolState;
 			
 			noiseSound = FlxG.play(Assets.NOISE_SOUND, 0, true);
 			
 			inventory = new FlxText(0, 0, FlxG.width, "");
 			add(inventory);
+			Globals.AMMO["pistol"] += 10;
 		}
 		
 		private function rayCallback(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
@@ -320,7 +323,16 @@ package
 				{
 					box.kill();
 					trace((box as GroundItem).content);
-					Globals.AMMO[(box as GroundItem).content] += 10;
+					if ((box as GroundItem).content == "pistol" || (box as GroundItem).content == "uzi")
+					{
+						Globals.AMMO[(box as GroundItem).content] += 30;
+					} else if ((box as GroundItem).content == "bomb" || (box as GroundItem).content == "bait")
+					{
+						Globals.AMMO[(box as GroundItem).content] += 3;
+					} else
+					{
+						Globals.AMMO[(box as GroundItem).content] += 10;
+					}
 				}
 			}
 			if (player.alive)
@@ -338,6 +350,31 @@ package
 					FlxG.resetState();
 				}
 			}
+			
+			if (levelFinishPoint)
+			{
+				dx = player.x - levelFinishPoint.x;
+				dy = player.y - levelFinishPoint.y;
+				dd = Math.sqrt(dx * dx + dy * dy);
+				if (dd < 80)
+				{
+					if (Globals.LEVEL != 2)
+					{
+						Globals.LEVEL++;
+						FlxG.switchState(new GameState());
+					} else
+					{
+						endGame = true;
+						var tmr:FlxTimer = new FlxTimer();
+						tmr.start(3, 1, winCallback);
+					}
+				}
+			}
+		}
+		
+		private function winCallback(tmr:FlxTimer):void 
+		{
+			FlxG.switchState(new MenuState);
 		}
 		
 		public function explode(x:Number, y:Number):void 
@@ -398,17 +435,6 @@ package
 					}
 				}
 			}
-			if (levelFinishPoint)
-			{
-				dx = player.x - levelFinishPoint.x;
-				dy = player.y - levelFinishPoint.y;
-				dd = Math.sqrt(dx * dx + dy * dy);
-				if (dd < 30)
-				{
-					//Globals.LEVEL++;
-					FlxG.resetState();
-				}
-			}
 		}
 		
 		override public function draw():void 
@@ -421,7 +447,11 @@ package
 			
 			foreground.buffer.draw(fovShape, mat);
 			foreground.buffer.applyFilter(foreground.buffer, foreground.buffer.rect, new Point(), new BlurFilter(30, 30));
-			background.buffer.threshold(foreground.buffer, foreground.buffer.rect, new Point(), "<=", 0x22222222, 0xFF000000);
+			
+			if (!endGame)
+			{
+				background.buffer.threshold(foreground.buffer, foreground.buffer.rect, new Point(), "<=", 0x22222222, 0xFF000000);
+			}
 			var dmfExp:DisplacementMapFilter = new DisplacementMapFilter(dispMapExp, new Point(FlxG.width / 2 - dispMapExp.width / 2, FlxG.height / 2 - dispMapExp.height / 2), BitmapDataChannel.RED, BitmapDataChannel.GREEN, expDispAmount, expDispAmount, DisplacementMapFilterMode.CLAMP);
 			var dmf:DisplacementMapFilter = new DisplacementMapFilter(dispMapWeapon, new Point(FlxG.width / 2 - dispMapWeapon.width / 2, FlxG.height / 2 - dispMapWeapon.height / 2), BitmapDataChannel.RED, BitmapDataChannel.GREEN, dispAmount, dispAmount, DisplacementMapFilterMode.CLAMP);
 			
